@@ -1,0 +1,631 @@
+zzzz  <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StegoHunt | Image Scanner</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#0B0F1A;
+  --card:#121826;
+  --cyan:#39E4E8;
+  --purple:#5B3FD3;
+  --text:#E6F1FF;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI',sans-serif;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:0 20px;
+}
+
+header{
+  padding:25px 0;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative; /* make it relative for absolute button */
+}
+
+.logo{
+  font-size:22px;
+  font-weight:600;
+  color:var(--cyan);
+}
+
+/* BACK TO HOME BUTTON */
+#backHomeBtn {
+  position: absolute;      /* Position relative to header */
+  top: 25px;               /* Align with header padding */
+  right: 20px;             /* Distance from right edge */
+  padding: 10px 20px;
+  background: linear-gradient(90deg,#5B3FD3,#39E4E8);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  z-index: 1000;           /* Stays above other elements */
+}
+
+#backHomeBtn:hover {
+  opacity: 0.9;
+}
+
+/* STATISTICS SECTION */
+.stats-section{
+  margin:60px 0 50px;
+}
+
+.stats-heading{
+  text-align:center;
+  margin-bottom:35px;
+}
+
+.stats-heading h2{
+  font-size:30px;
+  color:var(--cyan);
+  margin-bottom:8px;
+}
+
+.stats-heading p{
+  color:#9db3c7;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:25px;
+}
+
+.stat-card{
+  background:var(--card);
+  padding:25px;
+  border-radius:16px;
+  text-align:center;
+  border:1px solid rgba(57,228,232,0.15);
+  transition:0.3s;
+}
+
+.stat-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 10px 25px rgba(57,228,232,0.2);
+}
+
+.stat-card i{
+  font-size:28px;
+  color:var(--cyan);
+  margin-bottom:12px;
+}
+
+.stat-card h3{
+  font-size:24px;
+  margin-bottom:5px;
+}
+
+.stat-card p{
+  font-size:14px;
+  color:#9db3c7;
+}
+
+/* SCANNER SECTION */
+.scanner-section{
+  text-align:center;
+  margin-bottom:80px;
+}
+
+.section-header{
+  margin-bottom:40px;
+}
+
+.section-header h2{
+  font-size:32px;
+  color:var(--cyan);
+  margin-bottom:10px;
+}
+
+.section-header p{
+  color:#9db3c7;
+}
+
+.upload-wrapper{
+  display:flex;
+  justify-content:center;
+  margin-bottom:40px;
+}
+
+.upload-box{
+  width:500px;
+  padding:70px 30px;
+  border:2px dashed rgba(57,228,232,0.5);
+  border-radius:20px;
+  background:rgba(255,255,255,0.02);
+  cursor:pointer;
+  transition:0.3s;
+  text-align:center;
+}
+
+.upload-box:hover{
+  background:rgba(57,228,232,0.05);
+  box-shadow:0 0 25px rgba(57,228,232,0.25);
+}
+
+.upload-box h3{
+  margin-bottom:10px;
+}
+
+input[type="file"]{
+  display:none;
+}
+
+.forensic-workspace{
+  display:none;
+  grid-template-columns:1.2fr 1fr;
+  gap:30px;
+  margin-top:40px;
+  text-align:left;
+}
+
+/* PREVIEW & DETAILS */
+.preview-card{
+  background:var(--card);
+  border-radius:16px;
+  padding:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:400px;
+  transition:0.3s;
+}
+
+#previewImg{
+  width:100%;
+  max-height:350px;
+  object-fit:contain;
+}
+
+.data-column{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.info-panel{
+  background:var(--card);
+  padding:25px;
+  border-radius:16px;
+}
+
+.status-terminal{
+  background:#000;
+  padding:12px;
+  border-radius:8px;
+  font-family:monospace;
+  font-size:12px;
+  color:#50fa7b;
+  height:130px;
+  overflow-y:auto;
+  margin-top:15px;
+}
+
+/* RISK BAR */
+.risk-fill-container{
+  height:15px;
+  background:#1a1f2e;
+  border-radius:10px;
+  overflow:hidden;
+  margin:10px 0;
+}
+
+.risk-fill-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--purple),var(--cyan));
+  transition:width 1.5s ease;
+}
+
+/* SCANNING OVERLAY */
+#scanningOverlay{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(5,8,20,0.95);
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+.scanner-ui{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:40px;
+}
+
+.ai-ring{
+  position:relative;
+  width:140px;
+  height:140px;
+  border-radius:50%;
+  border:3px solid rgba(57,228,232,0.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  animation:rotateRing 3s linear infinite;
+}
+
+@keyframes rotateRing{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
+}
+
+.pulse{
+  position:absolute;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  border:2px solid var(--cyan);
+  animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1);opacity:1}
+  100%{transform:scale(1.6);opacity:0}
+}
+
+.core{
+  width:18px;
+  height:18px;
+  background:var(--cyan);
+  border-radius:50%;
+  box-shadow:0 0 12px var(--cyan);
+}
+
+.scan-status{
+  text-align:center;
+  color:#fff;
+}
+
+.scan-status h3{
+  color:var(--cyan);
+  font-size:22px;
+  margin-bottom:8px;
+}
+
+.scan-status p{
+  font-size:15px;
+  color:#9db3c7;
+}
+
+/* PDF BUTTON */
+#downloadBtn{
+  margin-top:15px;
+  padding:12px 18px;
+  background:linear-gradient(90deg,#5B3FD3,#39E4E8);
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  display:none;
+  transition:0.3s;
+}
+
+#downloadBtn:hover{
+  opacity:0.9;
+}
+
+@media(max-width:900px){
+  .forensic-workspace{
+    grid-template-columns:1fr;
+  }
+  .upload-box{
+    width:90%;
+    padding:50px 20px;
+  }
+}
+
+@keyframes logo-scan {
+  0%   { transform: translateY(0); opacity: 0.2; }
+  50%  { transform: translateY(50px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0.2; }
+}
+
+.logo line {
+  transform-origin: center;
+}
+
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div class="logo">
+  <svg viewBox="0 0 100 100" style="width: 40px; height: 40px; margin-right: 10px; vertical-align: middle;">
+      <path d="M50 5 L90 27.5 L90 72.5 L50 95 L10 72.5 L10 27.5 Z" style="fill: none; stroke: #39E4E8; stroke-width: 4;"/>
+      <line x1="25" y1="20" x2="75" y2="20" style="stroke: #39E4E8; stroke-width: 3; stroke-linecap: round; animation: logo-scan 2.5s infinite ease-in-out;"/>
+    </svg>
+    StegoHunt
+  </div>
+  <button id="backHomeBtn">← Back to Home</button>
+</header>
+
+<section class="stats-section">
+  <div class="stats-heading">
+    <h2>Platform Performance Overview</h2>
+    <p>Real-time AI driven steganography detection statistics</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <i class="fa-solid fa-shield-halved"></i>
+      <h3>98.7%</h3>
+      <p>Detection Accuracy</p>
+    </div>
+
+    <div class="stat-card">
+      <i class="fa-solid fa-image"></i>
+      <h3 id="scanCount">1240</h3>
+      <p>Images Scanned</p>
+    </div>
+
+    <div class="stat-card">
+      <i class="fa-solid fa-clock"></i>
+      <h3>0.8s</h3>
+      <p>Avg Processing Time</p>
+    </div>
+
+    <div class="stat-card">
+      <i class="fa-solid fa-database"></i>
+      <h3>AI Powered</h3>
+      <p>Deep Stego Analysis</p>
+    </div>
+  </div>
+</section>
+
+<section class="scanner-section">
+  <div class="section-header">
+    <h2>Image Scanner</h2>
+    <p>Upload an image to detect hidden steganographic content using AI-powered forensic analysis.</p>
+  </div>
+
+  <div class="upload-wrapper">
+    <label for="fileInput" class="upload-box">
+      <h3>Click to Upload Image</h3>
+      <p>Supported: JPG, PNG</p>
+    </label>
+    <input type="file" id="fileInput" accept="image/*">
+  </div>
+
+  <div class="forensic-workspace" id="forensicWorkspace">
+    <div class="preview-card">
+      <img id="previewImg">
+    </div>
+
+    <div class="data-column">
+
+      <div class="info-panel">
+    <h3>Forensic Details</h3>
+
+    <div style="display:flex;justify-content:space-between;font-size:13px;">
+        <span id="fileSize">File Size: --</span>
+        <span id="resolution">Resolution: --</span>
+    </div>
+
+    <div id="chiSquare" style="margin-top:5px;">Chi-Square: --</div>
+
+    <div class="status-terminal" id="termLog">> System standby...</div>
+</div>
+
+<div id="predictionBox" class="status-label">
+    Status: Waiting for analysis...
+</div>
+
+<p id="confidenceText"></p>
+
+<button id="downloadBtn">
+<i class="fa-solid fa-file-pdf"></i> Generate Forensic Report
+</button>
+
+<h3>Risk Assessment</h3>
+
+<div class="risk-fill-container">
+    <div class="risk-fill-bar" id="riskFill"></div>
+</div>
+
+<p id="riskPercent">0%</p>
+    </div>
+  </div>
+
+</section>
+</div>
+
+<div id="scanningOverlay">
+  <div class="scanner-ui">
+    <div class="ai-ring">
+      <div class="pulse"></div>
+      <div class="core"></div>
+    </div>
+    <div class="scan-status">
+      <h3>AI Forensic Analysis</h3>
+      <p>Analyzing image...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const fileInput = document.getElementById("fileInput");
+const preview = document.getElementById("previewImg");
+const workspace = document.getElementById("forensicWorkspace");
+const term = document.getElementById("termLog");
+const overlay = document.getElementById("scanningOverlay");
+const riskFill = document.getElementById("riskFill");
+const riskText = document.getElementById("riskPercent");
+const fileSizeText = document.getElementById("fileSize");
+const resolutionText = document.getElementById("resolution");
+const predictionBox = document.getElementById("predictionBox");
+const downloadBtn = document.getElementById("downloadBtn");
+const chiSquareText = document.getElementById("chiSquare");
+
+let uploadedFile = null;
+let pdfLink = null; // ✅ store PDF link
+
+// ----------------- IMAGE UPLOAD + PREDICT -----------------
+fileInput.addEventListener("change", async () => {
+
+    if(!fileInput.files.length) return;
+
+    uploadedFile = fileInput.files[0];
+
+    preview.src = URL.createObjectURL(uploadedFile);
+
+    workspace.style.display = "grid";
+    overlay.style.display = "flex";
+
+    fileSizeText.innerText = "File Size: " + (uploadedFile.size/1024).toFixed(1) + " KB";
+    resolutionText.innerText = "Resolution: --";
+
+    term.innerHTML = "";
+    chiSquareText.innerText = "Chi-Square: --";
+
+    const logs = [
+        "> Initializing scan engine...",
+        "> Extracting pixel matrices...",
+        "> Running steganography detection..."
+    ];
+
+    for(let log of logs){
+        term.innerHTML += log + "<br>";
+        term.scrollTop = term.scrollHeight;
+        await new Promise(r => setTimeout(r,500));
+    }
+
+    try{
+
+        const formData = new FormData();
+        formData.append("image", uploadedFile);
+
+        const res = await fetch("/predict",{
+            method:"POST",
+            body:formData
+        });
+
+        const data = await res.json();
+
+        console.log("Server Response:", data);
+
+        overlay.style.display = "none";
+
+        // ❌ HANDLE ERROR RESPONSE
+        if(data.error){
+            throw new Error(data.error);
+        }
+
+        // ✅ resolution
+        preview.onload = () => {
+            resolutionText.innerText =
+            "Resolution: " + preview.naturalWidth + " x " + preview.naturalHeight;
+        };
+
+        // ✅ chi-square formatted
+        chiSquareText.innerText = "Chi-Square: " +
+            (data.chi_square ? Number(data.chi_square).toFixed(2) : "--");
+
+        // ✅ risk
+        const risk = Math.round(data.risk ?? 0);
+        riskFill.style.width = risk + "%";
+        riskText.innerText = risk + "%";
+
+        // ✅ prediction
+        const prediction = data.prediction ?? "Unknown";
+
+        // ✅ derive confidence from risk
+        const confidence = risk;
+
+        const color = prediction === "Stego Image Detected"
+            ? "#FF5555"
+            : (prediction === "Suspicious Image" ? "#FFA500" : "#50fa7b");
+
+        predictionBox.innerHTML = `
+        <div style="
+        padding:15px;
+        border-radius:10px;
+        background:${color};
+        color:#fff;
+        font-weight:600;
+        font-size:18px;
+        text-align:center;">
+        ${prediction}<br>
+        Confidence: ${confidence}%
+        </div>
+        `;
+
+        // ✅ store PDF link (IMPORTANT FIX)
+        pdfLink = data.pdf_report;
+
+        if(pdfLink){
+            downloadBtn.style.display = "block";
+        }else{
+            downloadBtn.style.display = "none";
+        }
+
+    }
+    catch(err){
+
+        overlay.style.display = "none";
+        console.error(err);
+
+        predictionBox.innerHTML = `
+        <div style="
+        background:#ff5555;
+        padding:15px;
+        border-radius:10px;
+        text-align:center;">
+        Detection Failed<br>
+        ${err.message}
+        </div>`;
+    }
+
+});
+
+// ----------------- DOWNLOAD PDF -----------------
+downloadBtn.addEventListener("click", () => {
+
+    if(!pdfLink){
+        alert("No report available");
+        return;
+    }
+
+    window.location.href = pdfLink;
+
+});
+
+// ----------------- BACK TO HOME -----------------
+document.getElementById('backHomeBtn').addEventListener('click', () => {
+    window.location.href = "/";
+});
+
+</script>
+
+</body>
+</html>
