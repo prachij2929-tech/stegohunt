@@ -310,34 +310,52 @@ def check_login(username, password):
     else:
         return "wrong_password"
 
-
 @app.route("/login", methods=["POST"])
 def login():
 
-    data = request.get_json(silent=True)
+    data = request.get_json(silent=True) or {}
 
-    username = data.get("username","")
-    password = data.get("password","")
-    
+    username = data.get("username", "").strip()
+    password = data.get("password", "")
 
-    
+    # Basic validation
+    if not username or not password:
+        return jsonify({
+            "status": "fail",
+            "message": "Username and password are required"
+        })
 
-    
-
-    
-
+    # Check username and password in database
+    result = check_login(username, password)
 
     if result == "success":
         session["user"] = username
-        return jsonify({"status":"success","message":"Login Successful ✅"})
+
+        return jsonify({
+            "status": "success",
+            "message": "Login Successful ✅"
+        })
 
     elif result == "not_found":
-        return jsonify({"status":"not_found","message":"No account found ❌"})
+
+        return jsonify({
+            "status": "not_found",
+            "message": "No account found ❌"
+        })
 
     elif result == "wrong_password":
-        return jsonify({"status":"fail","message":"Invalid password ❌"})
 
+        return jsonify({
+            "status": "fail",
+            "message": "Invalid password ❌"
+        })
 
+    else:
+
+        return jsonify({
+            "status": "fail",
+            "message": "Login failed ❌"
+        })
 # ---------------- CONTACT ----------------
 @app.route("/contact", methods=["POST"])
 def contact():
