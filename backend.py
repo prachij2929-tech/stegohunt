@@ -15,8 +15,7 @@ from stego_pipeline import analyze_image
 # -------------------------------------------------
 
 app = Flask(__name__)
-app.secret_key = "captcha_secret"
-RECAPTCHA_SECRET_KEY = "6Le-C4IsAAAAAP-oiYDlDE2fJG4UijOwzXzs33Id"
+
 
 # ----------- ADDED FOLDERS FOR IMAGE + REPORTS -----------
 UPLOAD_FOLDER = "uploads"
@@ -321,20 +320,13 @@ def login():
     password = data.get("password","")
     captcha_response = data.get("captcha")
 
-    verify_url = "https://www.google.com/recaptcha/api/siteverify"
+    
 
-    payload = {
-        'secret': RECAPTCHA_SECRET_KEY,
-        'response': captcha_response
-    }
+    
 
     r = requests.post(verify_url, data=payload)
     result = r.json()
 
-    if not result['success']:
-        return jsonify({"status":"error","message":"Captcha verification failed"})
-
-    result = check_login(username, password)
 
     if result == "success":
         session["user"] = username
