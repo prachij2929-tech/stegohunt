@@ -275,16 +275,8 @@ background: #271b4b;
 border-radius:4px;
 box-shadow:0 1px 3px rgba(0,0,0,0.2);
 }
-.captcha-wrapper {
-    display: flex;
-    justify-content: center;      /* centers the checkbox horizontally */
-    margin-top: 15px;             /* moves "I'm not a robot" lower */
-    margin-bottom: 15px;          /* optional: space below checkbox */
-}
-.g-recaptcha {
-    transform: scale(0.5);       /* optional: resize checkbox */
-    transform-origin: top center;  /* scale from top so spacing works */
-}
+
+
 
 </style>
 </head>
@@ -524,10 +516,9 @@ box-shadow:0 1px 3px rgba(0,0,0,0.2);
            <button type="button" onclick="generateCaptcha()">↻</button>
         </div>
         <input type="text" id="captchaInput" placeholder="Enter CAPTCHA"style="width:100%; padding:12px;margin-top:5px; margin-bottom:0px; border-radius:8px; border:none; background:#0B0F1A; color:white;">
-        <div class="captcha-wrapper"> 
-        <div class="g-recaptcha" data-sitekey= "6Le-C4IsAAAAALk3Sa6unoQk8r3k22wPblklZUcd" style="margin-bottom:-10px;"></div>        </div>
-        <p id="captchaMsg" style="color:red; font-size:13px;"></p>
-        <!-- <button onclick="validateCaptcha()"style="width:100%; padding:16px; border-radius:35px;border:none; background:var(--purple); color:#fff;font-weight:bold; cursor:pointer; margin-top:0px">LOGIN</button>         -->
+  > 
+
+        <!-- <button LOGIN="validateCaptcha()"style="width:100%; padding:16px; border-radius:35px;border:none; background:var(--purple); color:#fff;font-weight:bold; cursor:pointer; margin-top:0px">LOGIN</button>         -->
         <!-- <p style="cursor:pointer; margin-top:16px;" onclick="openSignup()">Create account</p> -->
  
         
@@ -733,15 +724,10 @@ function login() {
     const userCaptcha = document.getElementById("captchaInput").value;
     var recaptcha = grecaptcha.getResponse();
     if (!username || !password) { alert("Enter username and password"); return; }
-    if(userCaptcha !== captchaCode){
-        alert("Captcha incorrect");
-        generateCaptcha();
-        return;
-    }
 
-    if(recaptcha.length == 0){
-        alert("Please verify reCAPTCHA");
-        return;
+
+
+    
     }
     // ✅ Disable button to prevent double click
     btn.disabled = true;
