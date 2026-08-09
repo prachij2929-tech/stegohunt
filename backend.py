@@ -15,7 +15,7 @@ from stego_pipeline import analyze_image
 # -------------------------------------------------
 
 app = Flask(__name__)
-app.secret_key = "stegnohunt_secret"
+app.secret_key = "captcha_secret"
 RECAPTCHA_SECRET_KEY = "6Le-C4IsAAAAAP-oiYDlDE2fJG4UijOwzXzs33Id"
 
 # ----------- ADDED FOLDERS FOR IMAGE + REPORTS -----------
