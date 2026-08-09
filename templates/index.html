@@ -261,20 +261,7 @@ box-shadow:0 8px 12px rgba(91,63,211,0.3);
 .chat-input input{ flex:1; padding:8px; border-radius:8px; border:none; outline:none; }
 .chat-input button{ padding:8px 12px; background:#6c63ff; border:none; color:white; border-radius:8px; cursor:pointer; }
 
-.captcha-container{
-display:flex;
-align-items:center;
-justify-content:center;
-gap:10px;
-margin:10px 0;
-}
 
-#captchaCanvas{
-border:1px solid #ccc;
-background: #271b4b;
-border-radius:4px;
-box-shadow:0 1px 3px rgba(0,0,0,0.2);
-}
 
 
 
@@ -282,7 +269,7 @@ box-shadow:0 1px 3px rgba(0,0,0,0.2);
 </head>
 
 <body>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    
 
 <header>
     <div class="logo">
@@ -511,12 +498,8 @@ box-shadow:0 1px 3px rgba(0,0,0,0.2);
         style="width:100%; padding:14px; margin-bottom:12px;
         border-radius:10px; border:none; background:#0B0F1A; color:#fff;">
 
-        <div class="captcha-container">
-           <canvas id="captchaCanvas" width="150" height="50"></canvas>
-           <button type="button" onclick="generateCaptcha()">↻</button>
-        </div>
-        <input type="text" id="captchaInput" placeholder="Enter CAPTCHA"style="width:100%; padding:12px;margin-top:5px; margin-bottom:0px; border-radius:8px; border:none; background:#0B0F1A; color:white;">
-  > 
+        
+  
 
         <!-- <button LOGIN="validateCaptcha()"style="width:100%; padding:16px; border-radius:35px;border:none; background:var(--purple); color:#fff;font-weight:bold; cursor:pointer; margin-top:0px">LOGIN</button>         -->
         <!-- <p style="cursor:pointer; margin-top:16px;" onclick="openSignup()">Create account</p> -->
@@ -721,8 +704,7 @@ function login() {
     const btn      = document.getElementById("loginBtn");
     const username = document.getElementById("loginUsername").value.trim();
     const password = document.getElementById("loginPassword").value;  // ✅ NO trim on password
-    const userCaptcha = document.getElementById("captchaInput").value;
-    var recaptcha = grecaptcha.getResponse();
+    
     if (!username || !password) { alert("Enter username and password"); return; }
 
 
@@ -855,51 +837,7 @@ function sendMsg() {
 
 </script>
 <script>
-let captchaCode="";
 
-function generateCaptcha(){
-
-let canvas=document.getElementById("captchaCanvas");
-let ctx=canvas.getContext("2d");
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-let chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-captchaCode="";
-
-for(let i=0;i<5;i++){
-captchaCode+=chars[Math.floor(Math.random()*chars.length)];
-}
-
-ctx.fillStyle="#12172a";
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-for(let i=0;i<4;i++){
-ctx.strokeStyle="#999";
-ctx.beginPath();
-ctx.moveTo(Math.random()*150,Math.random()*50);
-ctx.lineTo(Math.random()*150,Math.random()*50);
-ctx.stroke();
-}
-
-ctx.font="25px Arial";
-ctx.textAlign = "center";        
-ctx.textBaseline = "middle";
-let gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-gradient.addColorStop(0, "#39E4E8");   // cyan
-gradient.addColorStop(1, "#5B3FD3");   // purple
-ctx.fillStyle = gradient;
-ctx.fillText(captchaCode, canvas.width / 2, canvas.height / 2);
-}
-
-generateCaptcha();
-
-
-function validateCaptcha(){
-login();
-}
-
-window.onload = generateCaptcha;
 function openAdmin(){
     closeAll();
     document.getElementById("adminModal").style.display = "flex";
