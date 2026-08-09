@@ -318,14 +318,13 @@ def login():
 
     username = data.get("username","")
     password = data.get("password","")
-    captcha_response = data.get("captcha")
-
     
 
     
 
-    r = requests.post(verify_url, data=payload)
-    result = r.json()
+    
+
+    
 
 
     if result == "success":
