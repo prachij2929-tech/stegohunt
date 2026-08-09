@@ -501,7 +501,6 @@ box-shadow:0 8px 12px rgba(91,63,211,0.3);
         
   
 
-        <!-- <button LOGIN="validateCaptcha()"style="width:100%; padding:16px; border-radius:35px;border:none; background:var(--purple); color:#fff;font-weight:bold; cursor:pointer; margin-top:0px">LOGIN</button>         -->
         <!-- <p style="cursor:pointer; margin-top:16px;" onclick="openSignup()">Create account</p> -->
  
         
@@ -698,54 +697,80 @@ function signupDone() {
         btn.innerText = "Verify & Continue";
     });
 }
-
 // ========== LOGIN ==========
 function login() {
-    const btn      = document.getElementById("loginBtn");
+
+    const btn = document.getElementById("loginBtn");
+
     const username = document.getElementById("loginUsername").value.trim();
-    const password = document.getElementById("loginPassword").value;  // ✅ NO trim on password
-    
-    if (!username || !password) { alert("Enter username and password"); return; }
+    const password = document.getElementById("loginPassword").value;
 
-
-
-    
+    // Basic validation
+    if (!username || !password) {
+        alert("Enter username and password");
+        return;
     }
-    // ✅ Disable button to prevent double click
+
+    // Disable button
     btn.disabled = true;
     btn.innerText = "Logging in...";
 
     fetch("/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username, password: password, captcha:recaptcha })
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
     })
     .then(res => res.json())
     .then(data => {
+
+        console.log("Login response:", data);
+
         if (data.status === "success") {
-            alert(data.message);
+
+            alert(data.message || "Login successful!");
+
             window.location.href = "/detect";
 
         } else if (data.status === "not_found") {
-            // ✅ User doesn't exist — guide to signup
+
             closeLogin();
-            const goSignup = confirm("⚠️ No account found for this username.\n\nClick OK to create an account first.");
-            if (goSignup) { openSignup(); }
+
+            const goSignup = confirm(
+                "⚠️ No account found for this username.\n\nClick OK to create an account first."
+            );
+
+            if (goSignup) {
+                openSignup();
+            }
+
             btn.disabled = false;
             btn.innerText = "LOGIN";
 
         } else {
-            alert(data.message);
+
+            alert(data.message || "Invalid username or password");
+
             btn.disabled = false;
             btn.innerText = "LOGIN";
         }
+
     })
     .catch(err => {
+
+        console.error("Login error:", err);
+
         alert("Login failed. Please try again.");
+
         btn.disabled = false;
         btn.innerText = "LOGIN";
     });
 }
+
 
 // ========== OPEN & CLOSE MODALS ==========
 function openLogin() {
