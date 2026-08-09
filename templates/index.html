@@ -756,7 +756,7 @@ function login() {
     .then(data => {
         if (data.status === "success") {
             alert(data.message);
-            window.location.href = "/detect_final";
+            window.location.href = "/detect";
 
         } else if (data.status === "not_found") {
             // ✅ User doesn't exist — guide to signup
