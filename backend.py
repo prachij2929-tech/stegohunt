@@ -23,7 +23,7 @@ from stego_pipeline import analyze_image
 # -------------------------------------------------
 
 app = Flask(__name__)
-
+app.secret_key = os.getenv("SECRET_KEY")
 
 # ----------- ADDED FOLDERS FOR IMAGE + REPORTS -----------
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
