@@ -4,7 +4,15 @@ import smtplib
 from email.mime.text import MIMEText
 import mysql.connector
 import requests
+import numpy as np
+from PIL import Image
+from dotenv import load_dotenv
+load_dotenv()
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+DATASET_COVER = os.path.join(BASE_DIR, "Dataset", "Cover")
+DATASET_STEGO = os.path.join(BASE_DIR, "Dataset", "Stego")
 # ----------- ADDED FOR DETECTION SYSTEM -----------
 import os
 import uuid
@@ -31,19 +39,19 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 # ---------------- DATABASE CONNECTION ----------------
 def get_db_connection():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="stegnohunt",
-        port=3307
+        host=os.getenv("DB_HOST", "localhost"),
+        user=os.getenv("DB_USER", "root"),
+        password=os.getenv("DB_PASSWORD", ""),
+        database=os.getenv("DB_NAME", "stegnohunt"),
+        port=int(os.getenv("DB_PORT", "3307"))
     )
 
 
 # ---------------- SEND OTP EMAIL ----------------
 def send_otp_email(receiver_email, otp):
     try:
-        sender_email    = "harshadabarge21@gmail.com"
-        sender_password = "vdaxjtgscqbhafyq"
+        sender_email = os.getenv("MAIL_USERNAME")
+        sender_password = os.getenv("MAIL_PASSWORD")
         msg            = MIMEText(f"Your OTP is: {otp}")
         msg["Subject"] = "StegnoHunt OTP Verification"
         msg["From"]    = sender_email
@@ -114,7 +122,7 @@ def add_employee():
         cursor = conn.cursor()
 
         cursor.execute(
-            "INSERT INTO employees (name, email, position) VALUES (%s, %s, %s)",
+            "INSERT INTO employees1 (name, email, position) VALUES (%s, %s, %s)",
             (name, email, position)
         )
 
@@ -130,7 +138,7 @@ def add_employee():
 
 
 # ---------------- GET EMPLOYEES ----------------
-@app.route("/get-employees", methods=["GET"])
+@app.route("/get-employees1", methods=["GET"])
 def get_employees():
 
     if "admin" not in session:
@@ -154,7 +162,7 @@ def get_employees():
 
 
 # ---------------- DELETE EMPLOYEE ----------------
-@app.route("/delete-employee", methods=["POST"])
+@app.route("/delete-employee1", methods=["POST"])
 def delete_employee():
 
     if "admin" not in session:
@@ -882,14 +890,14 @@ def generate_pdf(result, image_path):
 
             # Dataset paths
             cover_path = os.path.join(
-                r"C:\caps\Dataset\Cover",
-                cover_file
-            )
+            DATASET_COVER,
+            cover_file
+           )
 
             stego_path = os.path.join(
-                r"C:\caps\Dataset\Stego",
-                stego_file
-            )
+            DATASET_STEGO,
+            stego_file
+           )
 
             if (
                 os.path.exists(cover_path)
@@ -1239,10 +1247,9 @@ def predict():
     analysis_path = file_path
 
     dataset_stego_path = os.path.join(
-        r"C:\caps\Dataset\Stego",
-        filename
+    DATASET_STEGO,
+    filename
     )
-
     if os.path.exists(dataset_stego_path):
         analysis_path = dataset_stego_path
 
