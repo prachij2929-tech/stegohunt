@@ -1,4 +1,4 @@
- from flask import Flask, render_template, request, session, jsonify, send_from_directory
+from flask import Flask, render_template, request, session, jsonify, send_from_directory
 import random
 import smtplib
 from email.mime.text import MIMEText
@@ -26,8 +26,8 @@ app = Flask(__name__)
 
 
 # ----------- ADDED FOLDERS FOR IMAGE + REPORTS -----------
-UPLOAD_FOLDER = "uploads"
-REPORT_FOLDER = "static/reports"
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
+REPORT_FOLDER = os.path.join(BASE_DIR, "static", "reports")
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(REPORT_FOLDER, exist_ok=True)
