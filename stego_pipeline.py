@@ -885,8 +885,13 @@ def analyze_image(file_path):
 
 if __name__ == "__main__":
 
-    test_file = (
-        r"C:\caps\Dataset\Stego\1_SUNI_4.pgm"
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    test_file = os.path.join(
+        BASE_DIR,
+        "Dataset",
+        "Stego",
+        "1_SUNI_4.pgm"
     )
 
     if not os.path.exists(
