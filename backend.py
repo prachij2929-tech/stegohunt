@@ -191,7 +191,7 @@ def delete_employee():
         return jsonify({"status": "error", "message": "Database error ❌"})
 
 # ---------------- DETECT PAGE ----------------
-@app.route("/detect_final")
+@app.route("/detect")
 def detect():
     if "user" not in session:
         return render_template("index.html")
