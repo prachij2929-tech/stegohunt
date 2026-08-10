@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, session, jsonify, send_from_directory
+import os
 import random
 import smtplib
 from email.mime.text import MIMEText
@@ -14,7 +15,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATASET_COVER = os.path.join(BASE_DIR, "Dataset", "Cover")
 DATASET_STEGO = os.path.join(BASE_DIR, "Dataset", "Stego")
 # ----------- ADDED FOR DETECTION SYSTEM -----------
-import os
 import uuid
 import datetime
 from werkzeug.utils import secure_filename
